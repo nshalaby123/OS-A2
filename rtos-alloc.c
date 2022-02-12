@@ -29,8 +29,8 @@ void*	rtos_malloc(size_t size){
 	if(!(freeList->size)){
 	
 	
+	}
 }
-
 /**
  * Change the size of the allocation starting at @b ptr to be @b size bytes,
  * as `realloc(3)` would.
