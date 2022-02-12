@@ -1,4 +1,17 @@
+#include "rtos-alloc.h"
 
+#include<stdio.h>
+#include<stddef.h>
+
+char memory[20000];
+
+struct block{
+ size_t size;
+ int free;
+ struct block *next; 
+};
+
+struct block *freeList=(void*)memory;
 
 
 /*
@@ -13,6 +26,8 @@
 void*	rtos_malloc(size_t size){
 	struct block *curr,*prev;
 	void *result;
+	if(!(freeList->size)){
+	
 	
 }
 
