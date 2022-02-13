@@ -178,16 +178,13 @@ void	rtos_free(void *ptr){
 	// first we need to find the block to free.
 
 	if(ptr != NULL){
-		
-
-
 	
 		const int index = block_list_find(&alloced_blocks, ptr);
 		assert(index >= 0);
 		assert(ptr == alloced_blocks.chunk[index].start);
 		
 
-		block_list_insert(&freed_blocks, alloced_blocks.chunk[index].start, alloced_blocks.chunk[index].block_size);
+		//block_list_insert(&freed_blocks, alloced_blocks.chunk[index].start, alloced_blocks.chunk[index].block_size);
 		block_list_remove(&alloced_blocks, (size_t) index); 	
 	}
 
