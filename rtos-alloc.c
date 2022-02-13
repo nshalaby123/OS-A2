@@ -187,7 +187,7 @@ void	rtos_free(void *ptr){
 		assert(ptr == alloced_blocks.chunk[index].start);
 		
 
-		block_list_insert(&freed_blocks, alloced_blocks.chunk[index].start, alloced_blocks[index].size);
+		block_list_insert(&freed_blocks, alloced_blocks.chunk[index].start, alloced_blocks[index].block_size);
 		block_list_remove(&alloced_blocks, (size_t) index); 	
 	}
 
