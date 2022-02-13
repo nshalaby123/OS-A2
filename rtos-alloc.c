@@ -11,7 +11,7 @@
 
 
 #define HEAP_CAP 640000
-#define HEAP_ALLOCED_CAP 1024
+
 #define BLOCK_LIST_CAP 1024
 
 
@@ -37,14 +37,11 @@ typedef struct{
 
 
 
-Block_List alloced_blocks[HEAP_FREED_CAP] = {0};
-Block_List freed_blocks = {0};
-
 void block_list_insert(Block_List *list, void *start, size_t size){
-	assert(list->count <BLOCK_LIST_CAP);
+	assert(list->count < BLOCK_LIST_CAP);
 	list->chunk[list->count].start = start;
-	list->chunk[list->count].size = size;
-	for(size_t i = list->count; i> 0 && list->chunk[i].ptr < list->chunk[i-1].ptr; --i){
+	list->chunk[list->count].block_size = size;
+	for(size_t i = list->count; i> 0 && list->chunk[i].start < list->chunk[i-1].start; --i){
 		// swap here!
 		const Block t = list->chunk[i];
 		list->chunk[i] = list->chunk[i-1];
