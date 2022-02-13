@@ -100,7 +100,7 @@ bool    rtos_allocated(void *ptr){
  * @returns the number of bytes that have been allocated to user code,
  *          **not** including any allocator overhead
  */
-size_t  rtos_total_allocated(void size){
+size_t  rtos_total_allocated(void){
 
 	return CAPACITY;
 }
