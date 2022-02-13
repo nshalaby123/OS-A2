@@ -50,7 +50,7 @@ void	rtos_free(void *ptr){
 
 
 
- * How large is the allocation pointed at by this pointer?
+/ * How large is the allocation pointed at by this pointer?
  *
  * @pre   @b ptr points at a valid allocation (according to `rtos_allocated`)
  */
