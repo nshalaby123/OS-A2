@@ -215,7 +215,7 @@ size_t  rtos_alloc_size(void *ptr){
  */
 bool    rtos_allocated(void *ptr){
 	
-
+	return true;
 }
 
 /**
