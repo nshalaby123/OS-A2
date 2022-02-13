@@ -2,6 +2,7 @@
 
 #include<stdio.h>
 #include<stddef.h>
+#include <stdbool.h>
 #include <assert.h>
 #include "rtos-alloc.h"
 
@@ -114,5 +115,5 @@ bool    rtos_allocated(void *ptr){
  */
 size_t  rtos_total_allocated(void){
 
-	return CAPACITY;
+	return HEAP_CAPACITY;
 }
