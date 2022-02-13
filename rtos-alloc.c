@@ -44,7 +44,7 @@ void*	rtos_malloc(size_t size){
 
 	const Heap_Block chunk = {
 		.start = result,
-		.block_size = size;
+		.block_size = size,
 		
 	};
 	
