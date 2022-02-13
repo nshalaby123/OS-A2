@@ -31,6 +31,8 @@ __BEGIN_DECLS
  * for you to implement:
  */
 
+void initialize();
+
 /**
  * Allocate @b size bytes of memory for the exclusive use of the caller,
  * as `malloc(3)` would.

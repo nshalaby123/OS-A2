@@ -7,13 +7,18 @@
 char memory[20000];
 
 struct block{
- size_t size;
+ size_t block_size;
  int free;
  struct block *next; 
 };
 
 struct block *freeList=(void*)memory;
 
+void initialize(){
+	freeList->size=20000-sizeof(struct block);
+	freeList->free=1;
+	freeList->next=NULL;
+}
 
 /**
  * Allocate @b size bytes of memory for the exclusive use of the caller,
@@ -22,10 +27,31 @@ struct block *freeList=(void*)memory;
 void*	rtos_malloc(size_t size){
 	struct block *curr,*prev;
 	void *result;
-	if(!(freeList->size)){
-	
+	if(!(freeList->block_size)){
+		initialize();
+				
 	
 	}
+	curr = freeList;
+	while((((curr->block_size)<size)||((curr->free)==0))&&(curr->next!=NULL)){
+		prev=curr;
+		curr=curr->next;
+		
+	}
+	if((curr->block_size)==size){
+		curr->free=0;
+		result=(void*)(++curr);
+		return result;
+	}
+	else if((curr->block_size)>size+sizeof(struct block))){
+		//split
+	}
+	else{
+		result=NULL;
+		return result;
+	}
+
+
 }
 /**
  * Change the size of the allocation starting at @b ptr to be @b size bytes,
