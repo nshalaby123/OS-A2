@@ -118,7 +118,7 @@ void block_list_merge(Block_List *dst, const Block_List *src){
 void*	rtos_malloc(size_t size){
 
 
-	const size_t size_words = (size_bytes + sizeof(uintptr_t) - 1) / sizeof(uintptr_t);
+	const size_t size_words = (size + sizeof(uintptr_t) - 1) / sizeof(uintptr_t);
 	if(size > 0) {
 
 		block_list_merge(&tmp_blocks, &freed_blocks);
@@ -126,16 +126,22 @@ void*	rtos_malloc(size_t size){
 
 		for(size_t i = 0; i < freed_blocks.count; ++i){
 			const Block block = freed_blocks.chunk[i];
-			if(block.size >= size_words) {
-				block_list_remove(&frees_blocks, i);
+			if(block.block_size >= size_words) {
+				block_list_remove(&freed_blocks, i);
 
-				const size_t tail_size_words = chunk.size- size_words;
+				const size_t tail_size_words = block.size- size_words;
 
-				block_list_insert(&freed_blocks, block.start + size_words, tail_size_words);
+				block_list_insert(&alloced_blocks, block.start, size_words);
+				if(tail_size_words > 0){
+					block_list_insert(&freed_blocks, block.start + size_words, tail_size_words);
 
-			}	
+				}
+			
+			
 			return block.start;
+			}
 		}
+	}
 	 return NULL;
 	
 
