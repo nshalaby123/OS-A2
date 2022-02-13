@@ -2,14 +2,16 @@
 
 #include<stdio.h>
 #include<stddef.h>
-
+#include <assert.h>
 #include "rtos-alloc.h"
 
-#define CAPACITY 640000
+#define HEAP_CAPACITY 640000
 
-char heap[CAPACITY];
+char heap[HEAP_CAPACITY];
 
 char memory[20000];
+size_t heap_size = 0;
+
 
 struct block{
  size_t block_size;
@@ -26,23 +28,19 @@ void initialize(){
 }
 
 
-void split(struct block *fitting_slot[],size_t size){
-	struct block *new=(void*)((void*)fitting_slot+size+sizeof(struct block));
- 	new->block_size=(fitting_slot->block_size)-size-sizeof(struct block);
- 	new->free=1;
- 	new->next=fitting_slot->next;
- 	fitting_slot->block_size=size;
- 	fitting_slot->free=0;
- 	fitting_slot->next=new;
-}	
+	
 
 /**
  * Allocate @b size bytes of memory for the exclusive use of the caller,
  * as `malloc(3)` would.
  */
 void*	rtos_malloc(size_t size){
+
+	assert(heap_size + size <= HEAP_CAPACITY);
 	struct block *curr,*prev;
-	void *result;
+	void *result = memory + heap_size;
+	heap_size+=size;
+	
 	if(!(freeList->block_size)){
 		initialize();
 				
@@ -60,7 +58,7 @@ void*	rtos_malloc(size_t size){
 		return result;
 	}
 	else if((curr->block_size)>(size+sizeof(struct block))){
-		split(curr, size);
+		//split
 		result=(void*)(curr++);
 		return result;
 	}
@@ -68,7 +66,8 @@ void*	rtos_malloc(size_t size){
 		result=NULL;
 		return result;
 	}
-
+	
+	return result;
 
 }
 /**
