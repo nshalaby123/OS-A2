@@ -1,3 +1,4 @@
+
 #include <stdint.h>
 
 #include<stdio.h>
@@ -44,7 +45,7 @@ typedef struct{
 
 Block_List alloced_blocks = {0};
 Block_List freed_blocks = {
-	.count = 1;
+	.count = 1,
 	.chunk = {
 		[0] = {.start = memory, .size = sizeof(memory)}
 	},
@@ -97,11 +98,11 @@ void block_list_merge(Block_List *dst, const Block_List *src){
 		const Block block = src->chunk[i];
 
 		if(dst->count > 0) {
-			Block *start_block = &dst->chunk[dst->chunk-1];
+			Block *start_block = &dst->chunk[dst->count-1];
 			if(start_block->start +start_block->size == block.size) {
 				start_block->size +=block.size;
 			} else {
-				block_list_insert(dst, clock.start, block.size);
+				block_list_insert(dst, block.start, block.size);
 			}
 		} else {
 			block_list_insert(dst, block.start, block.size);
