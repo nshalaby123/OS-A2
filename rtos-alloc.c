@@ -36,6 +36,8 @@ size_t heap_alloced_size = 0;
  */
 void*	rtos_malloc(size_t size){
 
+	if(size > 0) {
+
 	assert(heap_size + size <= HEAP_CAP);
 	
 	void *result = memory + heap_size;
@@ -52,12 +54,13 @@ void*	rtos_malloc(size_t size){
 	heap_alloced[heap_alloced_size++] = chunk;
 
 
-	
-	
-	
-	
+		
 	
 	return result;
+
+	} else {
+		 return NULL;
+	}
 
 }
 /**
