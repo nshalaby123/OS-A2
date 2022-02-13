@@ -4,6 +4,11 @@
 #include<stddef.h>
 
 #include "rtos-alloc.h"
+
+#define CAPACITY 640000
+
+char heap[CAPACITY];
+
 char memory[20000];
 
 struct block{
@@ -95,5 +100,7 @@ bool    rtos_allocated(void *ptr){
  * @returns the number of bytes that have been allocated to user code,
  *          **not** including any allocator overhead
  */
-size_t  rtos_total_allocated(void){
+size_t  rtos_total_allocated(void size){
+
+	return CAPACITY;
 }
