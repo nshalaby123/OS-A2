@@ -28,7 +28,7 @@
 #include "rtos-alloc.h"
 
 
-void*
+
 rtos_malloc(size_t size)
 {
 	if (alloc_debugging())
@@ -57,7 +57,7 @@ rtos_malloc(size_t size)
 	return p;
 }
 
-void*
+
 rtos_realloc(void *p, size_t size)
 {
 	if (alloc_debugging())
@@ -87,7 +87,7 @@ rtos_realloc(void *p, size_t size)
 	return newp;
 }
 
-void
+
 rtos_free(void *p)
 {
 	if (alloc_debugging())
