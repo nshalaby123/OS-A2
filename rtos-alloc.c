@@ -6,12 +6,16 @@
 #include <assert.h>
 #include "rtos-alloc.h"
 
+
+
+
+
 #define HEAP_CAP 640000
 #define HEAP_ALLOCED_CAP 1024
+#define BLOCK_LIST_CAP 1024
 
-char heap[HEAP_CAP];
 
-char memory[20000];
+char memory[HEAP_CAP] = {0};
 
 size_t heap_size = 0;
 
@@ -21,14 +25,39 @@ typedef struct {
 	void *start;
 	int free;
 	struct block *next; 
-} Heap_Block;
-
-Heap_Block heap_alloced[HEAP_ALLOCED_CAP] = {0};
-size_t heap_alloced_size = 0;
+} Block;
 
 
+typedef struct{
+	size_t count;
+	Block chunk[BLOCK_LIST_CAP];
 
+
+} Block_List;
+
+
+
+Block_List alloced_blocks[HEAP_FREED_CAP] = {0};
+Block_List freed_blocks = {0};
+
+void block_list_insert(Block_List *list, void *start, size_t size){
+	assert(list->count <BLOCK_LIST_CAP);
+	list->chunk[list->count].start = start;
+	list->chunk[list->count].size = size;
+	for(size_t i = list->count; i> 0 && list->chunk[i].ptr < list->chunk[i-1].ptr; --i){
+		// swap here!
+		const Block t = list->chunk[i];
+		list->chunk[i] = list->chunk[i-1];
+		list->chunk[i-1] = t;
 	
+	}
+	list->count += 1;
+
+}
+
+
+void block_list_remove(Block_List *list, void *ptr, size_t size){
+}
 
 /**
  * Allocate @b size bytes of memory for the exclusive use of the caller,
@@ -40,23 +69,12 @@ void*	rtos_malloc(size_t size){
 
 	assert(heap_size + size <= HEAP_CAP);
 	
-	void *result = memory + heap_size;
+	void *ptr = memory + heap_size;
 	
 	heap_size += size;
-
-	const Heap_Block chunk = {
-		.start = result,
-		.block_size = size,
-		
-	};
+	block_list_insert(&alloced_blocks, ptr,size);
 	
-	assert(heap_alloced_size < HEAP_ALLOCED_CAP);
-	heap_alloced[heap_alloced_size++] = chunk;
-
-
-		
-	
-	return result;
+	return ptr;
 
 	} else {
 		 return NULL;
@@ -68,13 +86,20 @@ void*	rtos_malloc(size_t size){
  * as `realloc(3)` would.
  */
 void*	rtos_realloc(void *ptr, size_t size){
+	
+
 }
 
 /**
  * Release the memory allocation starting at @b ptr for general use,
  * as `free(3)` would.
+ * O(Alloced)
  */
 void	rtos_free(void *ptr){
+	
+
+
+
 }
 
 
@@ -97,6 +122,9 @@ size_t  rtos_alloc_size(void *ptr){
  *          from @b my_{m,re}alloc
  */
 bool    rtos_allocated(void *ptr){
+	assert(false && "TODO");
+	return false;
+
 }
 
 /**
