@@ -22,7 +22,7 @@ size_t heap_size = 0;
 
 typedef struct {
 	size_t block_size;
-	void *start;
+	char *start;
 	int free;
 	struct block *next; 
 } Block;
@@ -89,14 +89,62 @@ void*	rtos_realloc(void *ptr, size_t size){
 
 }
 
+
+
+int block_start_compar(const void *a, const void *b){
+	const Block *a_block = a;
+	const Block *b_block = b;
+	
+
+	return b_block->start - a_block->start;
+
+
+}
+int block_list_find(const Block_List *list, void *ptr){
+	//binary search? - bsearch
+	Block key = {
+	
+
+		.start = ptr
+
+	};
+
+	Block *result =  *bsearch(&key, list->chunk, list->count, sizeof(list->chunk[0]), block_start_compar);
+	if(result !=0) {
+		assert(list->chunk <= result);
+		return (result - list->chunk) /sizeof(list->chunk[0]);
+
+
+
+	} else {
+		return -1;
+
+
+	}
+
+
+}
+
 /**
  * Release the memory allocation starting at @b ptr for general use,
  * as `free(3)` would.
  * O(Alloced)
  */
 void	rtos_free(void *ptr){
-	
+	// first we need to find the block to free.
 
+	if(ptr != NULL){
+		
+
+
+	
+	const int index = block_list_find(alloced_blocks, ptr);
+	assert(index >= 0);
+
+
+	block_list_insert(&freed_blocks, alloced_blocks.chunk[index].start, alloced_blocks[index].size);
+	block_list_remove(&alloced_blocks, (size_t) index); 	
+}
 
 
 }
