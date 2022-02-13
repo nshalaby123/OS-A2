@@ -26,13 +26,6 @@ typedef struct {
 block heap_alloced[HEAP_ALLOCED_CAP] = {0};
 size_t heap_alloced_size = 0;
 
-struct block *freeList=(void*)memory;
-
-void initialize(){
-	freeList->block_size=20000-sizeof(struct block);
-	freeList->free=1;
-	freeList->next=NULL;
-}
 
 
 	
