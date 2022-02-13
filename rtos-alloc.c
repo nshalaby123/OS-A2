@@ -120,13 +120,13 @@ void*	rtos_malloc(size_t size){
 
 	const size_t size_words = (size + sizeof(uintptr_t) - 1) / sizeof(uintptr_t);
 	if(size > 0) {
-
+	
 		block_list_merge(&tmp_blocks, &freed_blocks);
 		freed_blocks = tmp_blocks;
 
 		for(size_t i = 0; i < freed_blocks.count; ++i){
 			const Block block = freed_blocks.chunk[i];
-			if(block.block_size >= size_words) {
+		//	if(block.block_size >= size_words) {
 				block_list_remove(&freed_blocks, i);
 
 				const size_t tail_size_words = block.block_size- size_words;
@@ -139,7 +139,7 @@ void*	rtos_malloc(size_t size){
 			
 			
 			return block.start;
-			}
+		//	}
 		}
 	}
 	 return NULL;
