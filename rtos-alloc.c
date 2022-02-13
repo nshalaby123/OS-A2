@@ -3,7 +3,7 @@
 #include<stdio.h>
 #include<stddef.h>
 
-#include "rtos-alloc.c"
+#include "rtos-alloc.h"
 char memory[20000];
 
 struct block{
