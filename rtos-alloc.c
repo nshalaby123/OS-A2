@@ -132,7 +132,7 @@ void*	rtos_malloc(size_t size){
 				const size_t tail_size_words = block.block_size- size_words;
 
 				block_list_insert(&alloced_blocks, block.start, size_words);
-				if(tail_size_words > 0){
+				if(tail_size_words > 0 && block.block_size >= size_words){
 					block_list_insert(&freed_blocks, block.start + size_words, tail_size_words);
 
 				}
