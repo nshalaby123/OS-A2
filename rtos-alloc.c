@@ -96,7 +96,7 @@ int block_start_compar(const void *a, const void *b){
 	const Block *b_block = b;
 	
 
-	return b_block->start - a_block->start;
+	return a_block->start - b_block->start;
 
 
 }
@@ -138,7 +138,7 @@ void	rtos_free(void *ptr){
 
 
 	
-	const int index = block_list_find(alloced_blocks, ptr);
+	const int index = block_list_find(&alloced_blocks, ptr);
 	assert(index >= 0);
 
 
