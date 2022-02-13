@@ -23,7 +23,7 @@ typedef struct {
 	struct block *next; 
 } Heap_Block;
 
-block heap_alloced[HEAP_ALLOCED_CAP] = {0};
+Heap_Block heap_alloced[HEAP_ALLOCED_CAP] = {0};
 size_t heap_alloced_size = 0;
 
 
@@ -49,7 +49,7 @@ void*	rtos_malloc(size_t size){
 	};
 	
 	assert(heap_alloced_size < HEAP_ALLOCED_CAP);
-	heap_alloced[heap_alloced_size++] = block;
+	heap_alloced[heap_alloced_size++] = chunk;
 
 
 	
