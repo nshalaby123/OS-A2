@@ -3,7 +3,10 @@
 #include<stdio.h>
 #include<stddef.h>
 #include <stdbool.h>
+
 #include <assert.h>
+#include <string.h>
+
 #include "rtos-alloc.h"
 
 
