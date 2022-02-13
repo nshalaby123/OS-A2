@@ -55,8 +55,24 @@ void block_list_insert(Block_List *list, void *start, size_t size){
 }
 
 
-void block_list_remove(Block_List *list, void *ptr, size_t size){
+void block_list_remove(Block_List *list, size_t index){
+	assert(index < list->count);
+	for(size_t i = index; i < list->count - 1; ++i){
+		list->block[i] = list->block[i+1];
+		
+
+
+	}
+
+	list->count -=1;
+	
+
+
+
 }
+
+
+
 
 /**
  * Allocate @b size bytes of memory for the exclusive use of the caller,
@@ -138,13 +154,13 @@ void	rtos_free(void *ptr){
 
 
 	
-	const int index = block_list_find(&alloced_blocks, ptr);
-	assert(index >= 0);
+		const int index = block_list_find(&alloced_blocks, ptr);
+		assert(index >= 0);
 
 
-	block_list_insert(&freed_blocks, alloced_blocks.chunk[index].start, alloced_blocks[index].size);
-	block_list_remove(&alloced_blocks, (size_t) index); 	
-}
+		block_list_insert(&freed_block, alloced_blocks.chunk[index].start, alloced_blocks[index].size);
+		block_list_remove(&alloced_blocks, (size_t) index); 	
+	}
 
 
 }
