@@ -21,7 +21,7 @@ typedef struct {
 	void *start;
 	int free;
 	struct block *next; 
-} block;
+} Heap_Block;
 
 block heap_alloced[HEAP_ALLOCED_CAP] = {0};
 size_t heap_alloced_size = 0;
@@ -36,13 +36,13 @@ size_t heap_alloced_size = 0;
  */
 void*	rtos_malloc(size_t size){
 
-	assert(heap_size + size <= HEAP_CAPACITY);
-	struct block *curr,*prev;
+	assert(heap_size + size <= HEAP_CAP);
+	
 	void *result = memory + heap_size;
 	
 	heap_size += size;
 
-	const block chunk = {
+	const Heap_Block chunk = {
 		.start = result,
 		.block_size = size;
 		
@@ -104,5 +104,5 @@ bool    rtos_allocated(void *ptr){
  */
 size_t  rtos_total_allocated(void){
 
-	return HEAP_CAPACITY;
+	return HEAP_CAP;
 }

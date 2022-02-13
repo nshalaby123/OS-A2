@@ -31,8 +31,6 @@ __BEGIN_DECLS
  * for you to implement:
  */
 
-void initialize();
-void split(struct block *fitting_slot[],size_t size);
 
 /**
  * Allocate @b size bytes of memory for the exclusive use of the caller,
