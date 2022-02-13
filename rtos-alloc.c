@@ -58,7 +58,7 @@ void block_list_insert(Block_List *list, void *start, size_t size){
 void block_list_remove(Block_List *list, size_t index){
 	assert(index < list->count);
 	for(size_t i = index; i < list->count - 1; ++i){
-		list->block[i] = list->block[i+1];
+		list->chunk[i] = list->chunk[i+1];
 		
 
 
