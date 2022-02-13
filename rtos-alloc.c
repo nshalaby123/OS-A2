@@ -18,8 +18,6 @@
 #define BLOCK_LIST_CAP 1024
 
 
-assert(HEAP_CAP_BYTES % sizeof(uintptr_t) == 0);
-
 #define HEAP_CAP_WORDS (HEAP_CAP_BYTES / sizeof(uintptr_t))
 
 
