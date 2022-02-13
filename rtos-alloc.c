@@ -15,16 +15,17 @@
 #define BLOCK_LIST_CAP 1024
 
 
-char memory[HEAP_CAP] = {0};
-
+uintptr_t  memory[HEAP_CAP_WORDS] = {0};
 size_t heap_size = 0;
+
+const uintptr_t *stack_base = 0;
+bool reachable_blocks[BLOCK_LIST_CAP] = {0};
+
 
 
 typedef struct {
 	size_t block_size;
-	char *start;
-	int free;
-	struct block *next; 
+	uintptr_t *start; 
 } Block;
 
 
@@ -36,13 +37,24 @@ typedef struct{
 } Block_List;
 
 Block_List alloced_blocks = {0};
-Block_List freed_block = {0};
+Block_List freed_blocks = {
+	.count = 1;
+	.chunk = {
+		[0] = {.start = memory, .size = sizeof(memory)}
+	},
+};
+
+Block_List tmp_blocks = {0};
 
 
 void block_list_insert(Block_List *list, void *start, size_t size){
 	assert(list->count < BLOCK_LIST_CAP);
+
+	
 	list->chunk[list->count].start = start;
 	list->chunk[list->count].block_size = size;
+	
+
 	for(size_t i = list->count; i> 0 && list->chunk[i].start < list->chunk[i-1].start; --i){
 		// swap here!
 		const Block t = list->chunk[i];
@@ -71,7 +83,25 @@ void block_list_remove(Block_List *list, size_t index){
 
 }
 
+void block_list_merge(Block_List *dst, const Block_List *src){
 
+	dst->count = 0;
+	for(size_t i=0; i< src->count; ++i){
+
+		const Block block = src->chunk[i];
+
+		if(dst->count > 0) {
+			Block *start_block = &dst->chunk[dst->chunk-1];
+			if(start_block->start +start_block->size == block.size) {
+				start_block->size +=block.size;
+			} else {
+				block_list_insert(dst, clock.start, block.size);
+			}
+		} else {
+			block_list_insert(dst, block.start, block.size);
+		}
+	}
+}
 
 
 /**
@@ -80,20 +110,27 @@ void block_list_remove(Block_List *list, size_t index){
  */
 void*	rtos_malloc(size_t size){
 
+
+	const size_t size_words = (size_bytes + sizeof(uintptr_t) - 1) / sizeof(uintptr_t);
 	if(size > 0) {
 
-	assert(heap_size + size <= HEAP_CAP);
-	
-	void *ptr = memory + heap_size;
-	
-	heap_size += size;
-	block_list_insert(&alloced_blocks, ptr,size);
-	
-	return ptr;
+		block_list_merge(&tmp_blocks, &freed_blocks);
+		freed_blocks = tmp_blocks;
 
-	} else {
-		 return NULL;
-	}
+		for(size_t i = 0; i < freed_blocks.count; ++i){
+			const Block block = freed_blocks.chunk[i];
+			if(block.size >= size_words) {
+				block_list_remove(&frees_blocks, i);
+
+				const size_t tail_size_words = chunk.size- size_words;
+
+				block_list_insert(&freed_blocks, block.start + size_words, tail_size_words);
+
+			}	
+			return block.start;
+		}
+	 return NULL;
+	
 
 }
 /**
@@ -107,38 +144,16 @@ void*	rtos_realloc(void *ptr, size_t size){
 
 
 
-int block_start_compar(const void *a, const void *b){
-	const Block *a_block = a;
-	const Block *b_block = b;
+int block_list_find(const Block_List *list, uintptr_t *ptr){
+
+	for(size_t i = 0; i < list->count; ++i){
+		if(list->chunk[i].start == ptr){
+			return (int) i;
+		}
 	
-
-	return a_block->start - b_block->start;
-
-
-}
-int block_list_find(const Block_List *list, void *ptr){
-	//binary search? - bsearch
-	Block key = {
-	
-
-		.start = ptr
-
-	};
-
-	Block *result =  *bsearch(&key, list->chunk, list->count, sizeof(list->chunk[0]), block_start_compar);
-	if(result !=0) {
-		assert(list->chunk <= result);
-		return (result - list->chunk) /sizeof(list->chunk[0]);
-
-
-
-	} else {
-		return -1;
-
 
 	}
-
-
+	return -1;
 }
 
 /**
@@ -156,9 +171,10 @@ void	rtos_free(void *ptr){
 	
 		const int index = block_list_find(&alloced_blocks, ptr);
 		assert(index >= 0);
+		assert(ptr == alloced_blocks.chunk[index].start);
+		
 
-
-		block_list_insert(&freed_block, alloced_blocks.chunk[index].start, alloced_blocks[index].size);
+		block_list_insert(&freed_blocks, alloced_blocks.chunk[index].start, alloced_blocks[index].size);
 		block_list_remove(&alloced_blocks, (size_t) index); 	
 	}
 
