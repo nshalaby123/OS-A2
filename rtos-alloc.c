@@ -13,15 +13,20 @@
 
 
 
-#define HEAP_CAP 640000
+#define HEAP_CAP_BYTES 640000
 
 #define BLOCK_LIST_CAP 1024
+
+
+static_assert(HEAP_CAP_BYTES % sizeof(uint_t) == 0);
+
+#define HEAP_CAP_WORDS (HEAP_CAP_BYTES / sizeof(uintptr_t))
 
 
 uintptr_t  memory[HEAP_CAP_WORDS] = {0};
 size_t heap_size = 0;
 
-const uintptr_t *stack_base = 0;
+
 bool reachable_blocks[BLOCK_LIST_CAP] = {0};
 
 
