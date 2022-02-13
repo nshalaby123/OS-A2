@@ -129,7 +129,7 @@ void*	rtos_malloc(size_t size){
 			if(block.block_size >= size_words) {
 				block_list_remove(&freed_blocks, i);
 
-				const size_t tail_size_words = block.size- size_words;
+				const size_t tail_size_words = block.block_size- size_words;
 
 				block_list_insert(&alloced_blocks, block.start, size_words);
 				if(tail_size_words > 0){
@@ -227,5 +227,5 @@ bool    rtos_allocated(void *ptr){
  */
 size_t  rtos_total_allocated(void){
 
-	return HEAP_CAP;
+	return heap_size;
 }
