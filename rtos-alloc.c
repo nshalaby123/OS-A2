@@ -1,8 +1,9 @@
-#include "rtos-alloc.h"
+
 
 #include<stdio.h>
 #include<stddef.h>
 
+#include "rtos-alloc.c"
 char memory[20000];
 
 struct block{
