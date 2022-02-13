@@ -43,7 +43,7 @@ void*	rtos_malloc(size_t size){
 		result=(void*)(++curr);
 		return result;
 	}
-	else if((curr->block_size)>size+sizeof(struct block))){
+	else if((curr->block_size)>(size+sizeof(struct block))){
 		//split
 	}
 	else{
