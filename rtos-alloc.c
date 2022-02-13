@@ -15,11 +15,6 @@ struct block{
 struct block *freeList=(void*)memory;
 
 
-/*
- * The following functions are declartions of standard C library functions
- * for you to implement:
- */
-
 /**
  * Allocate @b size bytes of memory for the exclusive use of the caller,
  * as `malloc(3)` would.
@@ -50,7 +45,7 @@ void	rtos_free(void *ptr){
 
 
 
-/ * How large is the allocation pointed at by this pointer?
+/** How large is the allocation pointed at by this pointer?
  *
  * @pre   @b ptr points at a valid allocation (according to `rtos_allocated`)
  */
