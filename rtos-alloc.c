@@ -26,7 +26,7 @@ void initialize(){
 }
 
 
-void split(struct block *fitting_slot,size_t size){
+void split(struct block *fitting_slot[],size_t size){
 	struct block *new=(void*)((void*)fitting_slot+size+sizeof(struct block));
  	new->block_size=(fitting_slot->block_size)-size-sizeof(struct block);
  	new->free=1;
