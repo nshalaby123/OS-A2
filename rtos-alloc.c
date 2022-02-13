@@ -47,7 +47,7 @@ Block_List alloced_blocks = {0};
 Block_List freed_blocks = {
 	.count = 1,
 	.chunk = {
-		[0] = {.start = memory, .size = sizeof(memory)}
+		[0] = {.start = memory, .block_size = sizeof(memory)}
 	},
 };
 
@@ -99,13 +99,13 @@ void block_list_merge(Block_List *dst, const Block_List *src){
 
 		if(dst->count > 0) {
 			Block *start_block = &dst->chunk[dst->count-1];
-			if(start_block->start +start_block->size == block.size) {
-				start_block->size +=block.size;
+			if(start_block->start +start_block->block_size == block.block_size) {
+				start_block->block_size +=block.block_size;
 			} else {
-				block_list_insert(dst, block.start, block.size);
+				block_list_insert(dst, block.start, block._block_size);
 			}
 		} else {
-			block_list_insert(dst, block.start, block.size);
+			block_list_insert(dst, block.start, block.block_size);
 		}
 	}
 }
