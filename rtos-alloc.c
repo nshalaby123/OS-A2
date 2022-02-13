@@ -35,6 +35,8 @@ typedef struct{
 
 } Block_List;
 
+Block_List alloced_blocks = {0};
+Block_List freed_block = {0};
 
 
 void block_list_insert(Block_List *list, void *start, size_t size){
