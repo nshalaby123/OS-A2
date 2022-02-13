@@ -6,19 +6,25 @@
 #include <assert.h>
 #include "rtos-alloc.h"
 
-#define HEAP_CAPACITY 640000
+#define HEAP_CAP 640000
+#define HEAP_ALLOCED_CAP 1024
 
-char heap[HEAP_CAPACITY];
+char heap[HEAP_CAP];
 
 char memory[20000];
+
 size_t heap_size = 0;
 
 
-struct block{
- size_t block_size;
- int free;
- struct block *next; 
-};
+typedef struct {
+	size_t block_size;
+	void *start;
+	int free;
+	struct block *next; 
+} block;
+
+block heap_alloced[HEAP_ALLOCED_CAP] = {0};
+size_t heap_alloced_size = 0;
 
 struct block *freeList=(void*)memory;
 
@@ -40,33 +46,23 @@ void*	rtos_malloc(size_t size){
 	assert(heap_size + size <= HEAP_CAPACITY);
 	struct block *curr,*prev;
 	void *result = memory + heap_size;
-	heap_size+=size;
 	
-	if(!(freeList->block_size)){
-		initialize();
-				
-	
-	}
-	curr = freeList;
-	while((((curr->block_size)<size)||((curr->free)==0))&&(curr->next!=NULL)){
-		prev=curr;
-		curr=curr->next;
+	heap_size += size;
+
+	const block chunk = {
+		.start = result,
+		.block_size = size;
 		
-	}
-	if((curr->block_size)==size){
-		curr->free=0;
-		result=(void*)(++curr);
-		return result;
-	}
-	else if((curr->block_size)>(size+sizeof(struct block))){
-		//split
-		result=(void*)(curr++);
-		return result;
-	}
-	else{
-		result=NULL;
-		return result;
-	}
+	};
+	
+	assert(heap_alloced_size < HEAP_ALLOCED_CAP);
+	heap_alloced[heap_alloced_size++] = block;
+
+
+	
+	
+	
+	
 	
 	return result;
 
