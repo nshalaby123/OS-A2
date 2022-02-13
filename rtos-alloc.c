@@ -214,8 +214,7 @@ size_t  rtos_alloc_size(void *ptr){
  *          from @b my_{m,re}alloc
  */
 bool    rtos_allocated(void *ptr){
-	assert(false && "TODO");
-	return false;
+	
 
 }
 
