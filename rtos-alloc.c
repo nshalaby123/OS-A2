@@ -25,6 +25,17 @@ void initialize(){
 	freeList->next=NULL;
 }
 
+
+void split(struct block *fitting_slot,size_t size){
+	struct block *new=(void*)((void*)fitting_slot+size+sizeof(struct block));
+ 	new->size=(fitting_slot->size)-size-sizeof(struct block);
+ 	new->free=1;
+ 	new->next=fitting_slot->next;
+ 	fitting_slot->size=size;
+ 	fitting_slot->free=0;
+ 	fitting_slot->next=new;
+}	
+
 /**
  * Allocate @b size bytes of memory for the exclusive use of the caller,
  * as `malloc(3)` would.
@@ -49,7 +60,9 @@ void*	rtos_malloc(size_t size){
 		return result;
 	}
 	else if((curr->block_size)>(size+sizeof(struct block))){
-		//split
+		split(curr, size);
+		result=(void*)(curr++);
+		return result;
 	}
 	else{
 		result=NULL;
