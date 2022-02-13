@@ -15,7 +15,7 @@ struct block{
 struct block *freeList=(void*)memory;
 
 void initialize(){
-	freeList->size=20000-sizeof(struct block);
+	freeList->block_size=20000-sizeof(struct block);
 	freeList->free=1;
 	freeList->next=NULL;
 }
