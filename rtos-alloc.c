@@ -497,10 +497,10 @@ static struct allocation *first_alloc, *last_alloc;
 struct allocation*
 alloc_find(void *p)
 {
-	for (alloc_t *ap = first_alloc; ap != NULL; ap = ap->a_next)
+	for (Block *ap = first_alloc; ap != NULL; ap = ap->a_next)
 	{
-		assert(ap->a_base != NULL);
-		if (ap->a_base == p)
+		assert(ap->ptr != NULL);
+		if (ap->ptr == p)
 		{
 			return ap;
 		}
