@@ -202,9 +202,9 @@ void	rtos_free(void *ptr){
 
 	if(ptr != NULL){
 	
-		const int index = block_list_find(&alloced_blocks, ptr);
-		assert(index >= 0);
-		assert(ptr == alloced_blocks.chunk[index].start);
+//		const int index = block_list_find(&alloced_blocks, ptr);
+//		assert(index >= 0);
+//		assert(ptr == alloced_blocks.chunk[index].start);
 		
 
 		if(((void*)memory < ptr) && (ptr <= (void*)(memory + 25000))){
