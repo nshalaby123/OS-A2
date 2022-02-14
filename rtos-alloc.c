@@ -23,6 +23,8 @@
 uintptr_t  memory[HEAP_CAP] = {0};
 size_t heap_size = 0;
 
+void *global_stack = NULL;
+
 
 typedef struct Block {
 	size_t block_size;
@@ -89,6 +91,39 @@ void block_list_remove(Block_List *list, size_t index){
 }
 
 
+struct Block *free_block(struct Block  **finish, size_t size) {
+  struct Block *curr = global_stack;
+  while (curr && !(curr->free && curr->block_size >= size)) {
+    *finish = curr;
+    curr = curr->next;
+  }
+  return curr;
+}
+
+
+
+
+struct Block *find_space(struct Block* finish, size_t size) {
+ 	struct Block *block;
+  	block = sbrk(0);
+	void *request = sbrk(size + sizeof(struct Block));
+  	assert((void*)block == request);
+  	if (request == (void*) -1) {
+    		return NULL;
+  	}
+
+  	if (finish) { // NULL on finding space
+    		last->next = block;
+  	}
+ 	block->block_size = size;
+  	block->next = NULL;
+  	block->free = 0;
+  	return block;
+}
+
+
+
+
 // merge the free memory after the rtos_free
 // dst - destination
 // src - source
@@ -136,18 +171,41 @@ void split(Block *chunk, size_t size){
 // sbrk() changes the location of the program break, which defined the end of the proccess's 
 // data segment 
 void*	rtos_malloc(size_t size){
+	struck Block *block;
 
-	void *p = sbrk(0);
-  	void *request = sbrk(size);
-  	if (request == (void*) -1) {
-    		return NULL; // sbrk failed.
-  	} else {
-    		assert(p == request); 
-    		return p;
-  	}
+	if(size <= 0){
 
+		return NULL;
 
+	
 
+	if(!global_stack){
+		block = find_space(NULL, size);
+		if(!block){
+			return NULL;
+		} 
+
+		global_stack = block;
+		} else {
+
+			struct Block *finish = global_stack;
+			block = free_block(&finish, size);
+
+			if(!block){
+
+				return NULL;
+
+			}
+		} else {
+
+			block->free = 0;
+		}
+	}
+
+return(block+1);
+
+}
+	
 
 
 
@@ -258,6 +316,9 @@ void merge_2(){
  * as `realloc(3)` would.
  */
 void*	rtos_realloc(void *ptr, size_t size){
+	
+
+	
 	if(ptr == NULL){
 		return rtos_malloc(size);
 	}
@@ -313,18 +374,14 @@ void	rtos_free(void *ptr){
 
 
 	if(!ptr){
- 		return;
+ 	  return;
 
 	}
 
-
-
-
-
-  struct Block* block = get_block(ptr);
-  assert(block->free == 0);
+  	struct Block* block = get_block(ptr);
+ 	assert(block->free == 0);
   
-  block->free = 1;
+  	block->free = 1;
 /***
 
 	if(ptr != NULL){
