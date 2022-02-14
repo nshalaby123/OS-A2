@@ -247,10 +247,10 @@ int valid_addr(void *p){
  */
 void	rtos_free(void *ptr){
 	if(ptr == NULL) return;
-	
+	size_t *p;
 	ptr--;
 	counter = 0;
-	munmap(ptr, &ptr);
+	munmap(ptr, p);
 	
 }
 
@@ -281,11 +281,10 @@ bool    rtos_allocated(void *ptr){
 	if(ptr == NULL){
 		return false;
 	}	
-	// this was a test to see if my free was working accurately
-	// which it is... but.... this function is now the problem 
-	// hacky:(
+
+	// hacky - ish :(
 		
-		// if counter is 0 that mean the memory is freed
+	// if counter is 0 that mean the memory is freed
 	else if(counter == 2){
 		
 		return true;
