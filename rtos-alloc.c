@@ -246,8 +246,8 @@ void	rtos_free(void *ptr){
 	if(ptr == NULL) return;
 	block b;
 	ptr--;
-	munmap(ptr, ptr);
 	b->alloced = false;
+	munmap(ptr, ptr);
 	ptr = NULL;
 }
 
@@ -277,8 +277,8 @@ bool    rtos_allocated(void *ptr){
 	if(ptr == NULL){
 		return false;
 	}	
-	block b;
-	return b->alloced;
+	
+	return false;
 }
 
 /**
