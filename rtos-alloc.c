@@ -207,7 +207,7 @@ void	rtos_free(void *ptr){
 //		assert(ptr == alloced_blocks.chunk[index].start);
 		
 
-		if(((void*)memory <= ptr)){
+		if(((void*)memory <= ptr && (ptr <= (void*)(memory + 25000) )){
 		
 			Block *curr = ptr;
 			curr = curr - 1;
