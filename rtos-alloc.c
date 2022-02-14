@@ -115,8 +115,8 @@ void block_list_merge(Block_List *dst, const Block_List *src){
 
 
 void split(Block *chunk, size_t size){
-	Block *new = (void*)((void*)chunk+ size +sizeof(Block));
-	new->block_size = ((chunk->block_size)-size-sizeof(Block));
+	Block *new = (void*)((void*)chunk + size + sizeof(Block));
+	new->block_size = ((chunk->block_size) - size - sizeof(Block));
 	new->free = 1;
 	new->next = chunk->next;
 	chunk->block_size = size;
@@ -226,7 +226,26 @@ void merge_2(){
  * as `realloc(3)` would.
  */
 void*	rtos_realloc(void *ptr, size_t size){
-	
+	if(ptr == NULL){
+		return rtos_malloc(size);
+	}
+
+
+	if(size == 0){
+		rtos_free(ptr);
+		return NULL;
+
+
+	}
+
+	void* temp = rtos_malloc(size);
+	memcpy(temp,ptr,size);
+
+	rtos_free(ptr);
+
+	ptr = temp;
+
+	return ptr;
 
 }
 
