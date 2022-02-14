@@ -192,7 +192,7 @@ void	rtos_free(void *ptr){
 			curr = curr - 1;
 			curr->free = 1;
 
-			block_list_merge(curr, src);
+			block_list_merge(curr, ptr);
 		}
 
 		//block_list_insert(&freed_blocks, alloced_blocks.chunk[index].start, alloced_blocks.chunk[index].block_size);
