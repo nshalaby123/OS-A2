@@ -405,15 +405,13 @@ void	rtos_free(void *ptr){
 
 		return;
 	}
- 		int *plen = (int*)ptr;
-    		int len;
 
-    		plen--;                          // Reach top of memory
-    		len = *plen;                     // Read length
 
-    		munmap( (void*)plen, len );
-	ptr = NULL;
-	
+ 		void *chunk = ptr-sizeof(size_t);
+		if(munmap(chunk, *(size_t)chunk) != 0){
+			return
+
+		}
 }
 
 
