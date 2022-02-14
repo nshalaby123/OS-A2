@@ -201,7 +201,7 @@ block extend_heap (block last , size_t s){
 void*	rtos_malloc(size_t size){
 	size_t *p;
 	if(size == 0) return NULL;
-	p = mmpa(NULL, size + sizeof(size_t), PROT_READ| PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, 0,0);
+	p = mmap(NULL, size + sizeof(size_t), PROT_READ| PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, 0,0);
 	if(p == (void*)-1) return NULL;
 	
 	*p = size + sizeof(size_t);
