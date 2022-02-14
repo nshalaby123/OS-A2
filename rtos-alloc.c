@@ -7,6 +7,8 @@
 
 #include <assert.h>
 #include <string.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "rtos-alloc.h"
 
@@ -129,6 +131,24 @@ void split(Block *chunk, size_t size){
  * as `malloc(3)` would.
  */
 void*	rtos_malloc(size_t size){
+
+	void *p = sbrk(0);
+  	void *request = sbrk(size);
+  	if (request == (void*) -1) {
+    		return NULL; // sbrk failed.
+  	} else {
+    		assert(p == request); // Not thread safe.
+    		return p;
+  	}
+
+
+
+
+
+
+
+/**
+
 	if(size == 0){
 
 		return NULL;
@@ -177,7 +197,7 @@ void*	rtos_malloc(size_t size){
 
 	}
 
-/**
+
 
 	const size_t size_words = (size + sizeof(uintptr_t) - 1) / sizeof(uintptr_t);
 	if(size > 0) {
