@@ -357,7 +357,7 @@ Block merge_3(block block){
 		if (block->next)
 			block->next ->prev = block;
 	}
-	return (block);
+	return (*block);
 }
 
 
@@ -413,7 +413,7 @@ void	rtos_free(void *ptr){
 
   	block->free = 1;
 
-	if(block->prev && block-prev->free){
+	if(block->prev && block->prev->free){
 		block = merge_3(block->prev);
 
 
