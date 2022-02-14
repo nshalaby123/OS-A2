@@ -243,7 +243,7 @@ void	rtos_free(void *ptr){
 	if(ptr == NULL) return;
 	ptr--;
 	munmap(ptr, ptr);
-	
+	ptr = NULL;
 }
 
 
