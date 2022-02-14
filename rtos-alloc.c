@@ -14,66 +14,18 @@
 
 
 
-
-
-#define HEAP_CAP 25000
-#define BLOCK_LIST_CAP 1024
-
-
-uintptr_t  memory[HEAP_CAP] = {0};
 size_t heap_size = 0;
 size_t tmp_heap_size = 0;
 
 
 int counter = 0;
 
-void *global_stack = NULL;
-
 
 typedef struct Block {
 	size_t block_size;
 	int free;
-	uintptr_t *start;
-	struct Block *next;
-	struct Block *prev;
-	char data[1];
 	void *ptr; 
 } Block;
-#define BLOCK_SIZE sizeof(struct Block)
-
-typedef struct{
-	size_t count;
-	Block chunk[BLOCK_LIST_CAP];
-
-
-} Block_List;
-
-Block_List alloced_blocks = {0};
-Block_List freed_blocks = {
-	.count = 1,
-	.chunk = {
-		[0] = {.start = memory, .block_size = sizeof(memory)}
-	},
-};
-
-Block_List tmp_blocks = {0};
-
-
-Block *freeblock = (void*)memory;
-
-void *base = NULL;
-typedef struct Block *block;
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -92,7 +44,6 @@ typedef struct Block *block;
 // using first - fit
 void*	rtos_malloc(size_t size){
 	size_t *p;
-	block b;
 	if(size == 0) return NULL;
 
 	p = mmap(NULL, size + sizeof(size_t), PROT_READ| PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, 0,0);
