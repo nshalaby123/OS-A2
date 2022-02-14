@@ -128,7 +128,14 @@ struct Block *find_space(struct Block* finish, size_t size) {
 }
 
 
-
+block find_block (block *last , size_t size ){
+	block b=base;
+	while (b && !(b->free && b->block_size >= size )) {
+		*last = b;
+		b = b->next;
+	}
+	return (b);
+}
 
 // merge the free memory after the rtos_free
 // dst - destination
@@ -512,9 +519,7 @@ bool    rtos_allocated(void *ptr){
 	if(ptr == NULL){
 		return false;
 	}	
-	else{
-		return valid_addr(ptr);
-	}
+	return find_block(ptr);
 }
 
 /**
