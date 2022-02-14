@@ -136,55 +136,7 @@ block find_block (block *last , size_t size ){
 	return (b);
 }
 
-// merge the free memory after the rtos_free
-// dst - destination
-// src - source
 
-void block_list_merge(Block_List *dst, const Block_List *src){
-
-	dst->count = 0;
-	for(size_t i=0; i< src->count; ++i){
-
-		const Block block = src->chunk[i];
-
-		if(dst->count > 0) {
-			Block *start_block = &dst->chunk[dst->count-1];
-
-			if(start_block->start +start_block->block_size == block.start) {
-				start_block->block_size += block.block_size;
-			} else {
-				block_list_insert(dst, block.start, block.block_size);
-			}
-		} else {
-			block_list_insert(dst, block.start, block.block_size);
-		}
-	}
-}
-
-block extend_heap (block last , size_t s){
-	block b;
-	b = sbrk (0);
-	if (sbrk( BLOCK_SIZE + s) == (void*) -1)
-		return (NULL );
-	b->block_size = s;
-	b->next = NULL;
-	if (last)
-		last ->next = b;
-	b->free = 0;
-	return (b);
-}
-
-// void split(block chunk, size_t size){
-// 	block new;
-// 	new = chunk->data + size;
-// 	new->block_size = ((chunk->block_size) - size - BLOCK_SIZE);
-// 	new->free = 1;
-// 	new->next = chunk->next;
-// 	chunk->block_size = size;
-// 	chunk->free = 0;
-// 	chunk->next = new;
-	
-// }
 
 
 
@@ -197,6 +149,9 @@ block extend_heap (block last , size_t s){
 
 // sbrk() changes the location of the program break, which defined the end of the proccess's 
 // data segment 
+
+// for small chunks use sbrk and brk
+// for large chunks - mmap an munmap
 // using first - fit
 void*	rtos_malloc(size_t size){
 	size_t *p;
@@ -244,15 +199,7 @@ void*	rtos_realloc(void *ptr, size_t size){
 
 }
 
-Block merge_3(block block){
-	if (block->next && block->next ->free ){
-		block->block_size += sizeof(block) + block->next -> block_size;
-		block->next = block->next ->next;
-		if (block->next)
-			block->next ->prev = block;
-	}
-	return (*block);
-}
+
 
 
 int block_list_find(const Block_List *list, uintptr_t *ptr){
@@ -293,22 +240,10 @@ int valid_addr(void *p){
  * O(Alloced)
  */
 void	rtos_free(void *ptr){
-
-
-	if(ptr==NULL){
-
-		return;
-	}
-
-
- 		void *chunk = ptr-sizeof(size_t);
-		if(munmap(chunk, *(size_t*)chunk) != 0){
-			ptr = NULL;
-
-			return;
-
-		}
-	ptr = NULL;
+	if(ptr == NULL) return;
+	ptr--;
+	munmap(ptr, &ptr);
+	
 }
 
 
