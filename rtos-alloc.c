@@ -143,7 +143,7 @@ void*	rtos_malloc(size_t size){
 	}
 
 	curr = freeblock;
-	while(((((curr->block_size <size) || ((curr->free == 0))) && (curr->next !=NULL)))){
+	while(((((curr->block_size < size) || ((curr->free == 0))) && (curr->next !=NULL)))){
 		prev = curr;
 		curr = curr->next;
 		
@@ -157,7 +157,7 @@ void*	rtos_malloc(size_t size){
 	}
 
 	else if((curr->block_size) > (size + sizeof(Block))){
-		//split
+		split(curr, size);
 
 		start = (void*)(curr++);
 		return start;
@@ -259,7 +259,7 @@ void	rtos_free(void *ptr){
 //		assert(ptr == alloced_blocks.chunk[index].start);
 		
 
-		if(((void*)memory <= ptr && (ptr <= (void*)(memory + 25000) ))){
+		if(((void*)memory <= ptr) && (ptr <= (void*)(memory + 25000 ))){
 		
 			Block *curr = ptr;
 			curr = curr - 1;
