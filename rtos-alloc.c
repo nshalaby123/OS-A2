@@ -400,14 +400,16 @@ int valid_addr(void *p){
  */
 void	rtos_free(void *ptr){
 	// first we need to find the block to free.
-
+	block block;
 
 	if(!ptr){
  	  return;
 
 	}
 
-  	struct Block* block = get_block(ptr);
+  //	struct Block* block = get_block(ptr);
+
+	block = get_block(ptr);
  	assert(block->free == 0);
   
 
