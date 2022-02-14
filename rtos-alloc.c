@@ -174,17 +174,17 @@ block extend_heap (block last , size_t s){
 	return (b);
 }
 
-void split(block chunk, size_t size){
-	block new;
-	new = chunk->data + size;
-	new->block_size = ((chunk->block_size) - size - BLOCK_SIZE);
-	new->free = 1;
-	new->next = chunk->next;
-	chunk->block_size = size;
-	chunk->free = 0;
-	chunk->next = new;
+// void split(block chunk, size_t size){
+// 	block new;
+// 	new = chunk->data + size;
+// 	new->block_size = ((chunk->block_size) - size - BLOCK_SIZE);
+// 	new->free = 1;
+// 	new->next = chunk->next;
+// 	chunk->block_size = size;
+// 	chunk->free = 0;
+// 	chunk->next = new;
 	
-}
+// }
 
 
 
@@ -212,109 +212,6 @@ void*	rtos_malloc(size_t size){
 	
 
 
-
-
-/**
-
-	if(size == 0){
-
-		return NULL;
-
-	}
-
-	
-	
-	Block *curr, *prev;
-	void *start;
-
-	if(!(freeblock->block_size)){
-		freeblock->block_size = HEAP_CAP - sizeof(Block);
-		freeblock->free = 1;
-		freeblock->next = NULL;
-	
-
-
-	}
-
-	curr = freeblock;
-	while(((((curr->block_size < size) || ((curr->free == 0))) && (curr->next !=NULL)))){
-		prev = curr;
-		curr = curr->next;
-		
-	}
-
-	if((curr->block_size) == size){
-		curr->free = 0;
-		start = (void*)(curr++);
-		return start;
-
-	}
-
-	else if((curr->block_size) > (size + sizeof(Block))){
-		split(curr, size);
-
-		start = (void*)(curr++);
-		return start;
-
-	}
-
-	else {
-		start = NULL;
-		
-
-	}
-
-
-
-	const size_t size_words = (size + sizeof(uintptr_t) - 1) / sizeof(uintptr_t);
-	if(size > 0) {
-	
-		block_list_merge(&tmp_blocks, &freed_blocks);
-		freed_blocks = tmp_blocks;
-
-		for(size_t i = 0; i < freed_blocks.count; ++i){
-			const Block block = freed_blocks.chunk[i];
-		//	if(block.block_size >= size_words) {
-				block_list_remove(&freed_blocks, i);
-
-				const size_t tail_size_words = block.block_size- size_words;
-
-				block_list_insert(&alloced_blocks, block.start, size_words);
-				if(tail_size_words > 0 && block.block_size >= size_words){
-					block_list_insert(&freed_blocks, block.start + size_words, tail_size_words);
-
-				}
-			
-			
-			return block.start;
-		//	}
-		}
-	}
-	 return NULL;
-***/	
-
-
-
-void merge_2(){
-	Block *curr, *prev;
-	curr = freeblock;
-	while((curr->next) != NULL){
-		if((curr->free) && (curr->next->free)){
-			curr->block_size = curr->block_size + ((curr->next->block_size) + sizeof(struct Block));
-			curr->next = curr->next->next;
-
-		}
-		else if((curr->free == 1) && (curr->next->free == 0)){
-			curr = curr->next;
-
-		}
-		prev = curr;
-		curr = curr->next;
-
-	}
-
-
-}
 /**
  * Change the size of the allocation starting at @b ptr to be @b size bytes,
  * as `realloc(3)` would.
