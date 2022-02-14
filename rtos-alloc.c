@@ -207,7 +207,7 @@ void	rtos_free(void *ptr){
 //		assert(ptr == alloced_blocks.chunk[index].start);
 		
 
-		if(((void*)memory <= ptr))){
+		if(((void*)memory <= ptr)){
 		
 			Block *curr = ptr;
 			curr = curr - 1;
@@ -232,7 +232,7 @@ void	rtos_free(void *ptr){
  * @pre   @b ptr points at a valid allocation (according to `rtos_allocated`)
  */
 size_t  rtos_alloc_size(void *ptr){
-	return ptr;
+	return sizeof(ptr);
 
 }
 
