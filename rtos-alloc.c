@@ -246,16 +246,18 @@ int valid_addr(void *p){
  */
 void	rtos_free(void *ptr){
 	if(ptr == NULL) return;
-	block b;
+
 	
-	size_t *p;
-	p = sizeof(size_t);
-	if(p==(void*)-1) return NULL;
+	size_t size;
+	int *p = ptr;
+
 	
 	
 	ptr--;
+	size = *p;
+	
 	counter = 0;
-	munmap(ptr, *p);
+	munmap(ptr, size);
 	
 }
 
