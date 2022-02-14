@@ -250,7 +250,7 @@ void	rtos_free(void *ptr){
 	
 	ptr--;
 	counter = 0;
-	munmap(ptr, ptr);
+	munmap(ptr, &ptr);
 	
 }
 
