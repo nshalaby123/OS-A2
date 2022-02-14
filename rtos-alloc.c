@@ -113,12 +113,64 @@ void block_list_merge(Block_List *dst, const Block_List *src){
 }
 
 
+
+void split(Block *chunk, size_t size){
+	Block *new = (void*)((void*)chunk+ size +sizeof(Block));
+	new->block_size = (chunk->block_size)-size-sizeof(Block));
+	new->free = 1;
+	new->next = chunk->next;
+	chunk->block_size = size;
+	chunk->free = 0;
+	chunk->next = new;
+	
+}
 /**
  * Allocate @b size bytes of memory for the exclusive use of the caller,
  * as `malloc(3)` would.
  */
 void*	rtos_malloc(size_t size){
 
+	Block *curr, *prev;
+	void *start;
+
+	if(!(freeblock->block_size)){
+		freeblock->block_size = memory-sizeof(Block);
+		freeblock->free = 1;
+		freeblock->next = NULL;
+	
+
+
+	}
+
+	curr = freeblock;
+	while((((curr->block_size <size) || ((curr->free == 0)) && (curr->next !=NULL)))){
+		prev = curr;
+		curr = curr->next;
+		
+	}
+
+	if((curr->size) == size){
+		curr->free = 0;
+		start = (void*)(curr++);
+		return start;
+
+	}
+
+	else if((curr->block_size) > (size + sizeof(Block))){
+		//split
+
+		start = (void*)(curr++);
+		return start;
+
+	}
+
+	else {
+		start = NULL;
+		
+
+	}
+
+/**
 
 	const size_t size_words = (size + sizeof(uintptr_t) - 1) / sizeof(uintptr_t);
 	if(size > 0) {
@@ -145,7 +197,7 @@ void*	rtos_malloc(size_t size){
 		}
 	}
 	 return NULL;
-	
+***/	
 
 }
 
