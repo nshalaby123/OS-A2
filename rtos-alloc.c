@@ -23,6 +23,8 @@
 uintptr_t  memory[HEAP_CAP] = {0};
 size_t heap_size = 0;
 
+
+
 void *global_stack = NULL;
 
 
@@ -35,7 +37,7 @@ typedef struct Block {
 	char data[1];
 	void *ptr; 
 } Block;
-
+#define BLOCK_SIZE sizeof(struct Block)
 
 typedef struct{
 	size_t count;
@@ -90,9 +92,6 @@ void block_list_remove(Block_List *list, size_t index){
 	}
 
 	list->count -= 1;
-	
-
-
 
 }
 
@@ -162,11 +161,23 @@ void block_list_merge(Block_List *dst, const Block_List *src){
 	}
 }
 
+block extend_heap (block last , size_t s){
+	block b;
+	b = sbrk (0);
+	if (sbrk( BLOCK_SIZE + s) == (void*) -1)
+		return (NULL );
+	b->block_size = s;
+	b->next = NULL;
+	if (last)
+		last ->next = b;
+	b->free = 0;
+	return (b);
+}
 
-
-void split(Block *chunk, size_t size){
-	Block *new = (void*)((void*)chunk + size + sizeof(Block));
-	new->block_size = ((chunk->block_size) - size - sizeof(Block));
+void split(block chunk, size_t size){
+	block new;
+	new = chunk->data + size;
+	new->block_size = ((chunk->block_size) - size - BLOCK_SIZE);
 	new->free = 1;
 	new->next = chunk->next;
 	chunk->block_size = size;
@@ -174,6 +185,9 @@ void split(Block *chunk, size_t size){
 	chunk->next = new;
 	
 }
+
+
+
 /**
  * Allocate @b size bytes of memory for the exclusive use of the caller,
  * as `malloc(3)` would.
@@ -183,40 +197,38 @@ void split(Block *chunk, size_t size){
 
 // sbrk() changes the location of the program break, which defined the end of the proccess's 
 // data segment 
+// using first - fit
 void*	rtos_malloc(size_t size){
-	struct Block *block;
+	block b, last;
+	size_t s;
 
 	if(size <= 0){
-
 		return NULL;
-
 	}
 
-		if(!global_stack){
-			block = find_space(NULL, size);
-			if(!block){
-				return NULL;
-			} 
-
-			global_stack = block;
-		} else {
-
-			struct Block *finish = global_stack;
-			block = free_block(&finish, size);
-
-			if(!block){
-				block = find_space(finish, size);
-				if(!block){
-
-					return NULL;
+		if(base){
+			last = base;
+			b = find_block(&last, s);
+			if(b){
+				if((b->block_size-s) >= (BLOCK_SIZE +4)){
+					split(b, s);
 				}
+					b->free = 0;
 			} else {
+					b = extend_heap(last,s);
+					if(!b){
+						return NULL;
+					}
+				}
+				
+			} else {
+				b = extend_heap(NULL,s);
+				if(!b)
+					return NULL;
+				base = b;
+			}
 
-			block->free = 0;
-		}
-	}
-
-	return(block->data);
+	return(b->data);
 
 }
 	
