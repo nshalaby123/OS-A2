@@ -14,24 +14,18 @@
 
 
 
-#define HEAP_CAP_BYTES 640000
-
+#define HEAP_CAP 640000
 #define BLOCK_LIST_CAP 1024
-
-
-#define HEAP_CAP_WORDS (HEAP_CAP_BYTES / sizeof(uintptr_t))
+#define HEAP_CAP_WORDS (HEAP_CAP / sizeof(uintptr_t))
 
 
 uintptr_t  memory[HEAP_CAP_WORDS] = {0};
 size_t heap_size = 0;
 
 
-bool reachable_blocks[BLOCK_LIST_CAP] = {0};
-
-
-
 typedef struct {
 	size_t block_size;
+	int free;
 	uintptr_t *start; 
 } Block;
 
@@ -53,6 +47,8 @@ Block_List freed_blocks = {
 
 Block_List tmp_blocks = {0};
 
+
+Block *freeblock = (void*)memory;
 
 void block_list_insert(Block_List *list, void *start, size_t size){
 	assert(list->count < BLOCK_LIST_CAP);
@@ -83,12 +79,17 @@ void block_list_remove(Block_List *list, size_t index){
 
 	}
 
-	list->count -=1;
+	list->count -= 1;
 	
 
 
 
 }
+
+
+// merge the free memory after the rtos_free
+// dst - destination
+// src - source
 
 void block_list_merge(Block_List *dst, const Block_List *src){
 
@@ -99,8 +100,9 @@ void block_list_merge(Block_List *dst, const Block_List *src){
 
 		if(dst->count > 0) {
 			Block *start_block = &dst->chunk[dst->count-1];
+
 			if(start_block->start +start_block->block_size == block.start) {
-				start_block->block_size +=block.block_size;
+				start_block->block_size += block.block_size;
 			} else {
 				block_list_insert(dst, block.start, block.block_size);
 			}
@@ -184,8 +186,17 @@ void	rtos_free(void *ptr){
 		assert(ptr == alloced_blocks.chunk[index].start);
 		
 
+		if(((void*)memory < ptr) && (ptr <= (void*)(memory + 25000))){
+		
+			Block *curr = ptr;
+			curr = curr - 1;
+			curr->free = 1;
+
+			block_list_merge(curr, src);
+		}
+
 		//block_list_insert(&freed_blocks, alloced_blocks.chunk[index].start, alloced_blocks.chunk[index].block_size);
-		block_list_remove(&alloced_blocks, (size_t) index); 	
+		//block_list_remove(&alloced_blocks, (size_t) index); 	
 	}
 
 
