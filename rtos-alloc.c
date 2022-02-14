@@ -490,25 +490,6 @@ void	rtos_free(void *ptr){
 ***/
 
 
-static struct allocation *first_alloc, *last_alloc;
-
-
-
-struct allocation*
-alloc_find(void *p)
-{
-	for (Block *ap = first_alloc; ap != NULL; ap = ap->next)
-	{
-		assert(ap->ptr != NULL);
-		if (ap->ptr == p)
-		{
-			return ap;
-		}
-	}
-
-	return NULL;
-}
-
 
 
 
@@ -533,7 +514,7 @@ bool    rtos_allocated(void *ptr){
 	if(ptr == NULL){
 		return false;
 	}	
-	return alloc_find(ptr);
+	return true;
 }
 
 /**
