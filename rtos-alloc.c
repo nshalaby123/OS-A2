@@ -116,7 +116,7 @@ void block_list_merge(Block_List *dst, const Block_List *src){
 
 void split(Block *chunk, size_t size){
 	Block *new = (void*)((void*)chunk+ size +sizeof(Block));
-	new->block_size = (chunk->block_size)-size-sizeof(Block));
+	new->block_size = ((chunk->block_size)-size-sizeof(Block));
 	new->free = 1;
 	new->next = chunk->next;
 	chunk->block_size = size;
@@ -134,7 +134,7 @@ void*	rtos_malloc(size_t size){
 	void *start;
 
 	if(!(freeblock->block_size)){
-		freeblock->block_size = memory-sizeof(Block);
+		freeblock->block_size = HEAP_CAP - sizeof(Block);
 		freeblock->free = 1;
 		freeblock->next = NULL;
 	
@@ -143,13 +143,13 @@ void*	rtos_malloc(size_t size){
 	}
 
 	curr = freeblock;
-	while((((curr->block_size <size) || ((curr->free == 0)) && (curr->next !=NULL)))){
+	while(((((curr->block_size <size) || ((curr->free == 0))) && (curr->next !=NULL)))){
 		prev = curr;
 		curr = curr->next;
 		
 	}
 
-	if((curr->size) == size){
+	if((curr->block_size) == size){
 		curr->free = 0;
 		start = (void*)(curr++);
 		return start;
