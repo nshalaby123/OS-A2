@@ -248,7 +248,7 @@ void	rtos_free(void *ptr){
 	ptr--;
 	b->alloced = false;
 	munmap(ptr, ptr);
-	ptr = NULL;
+	
 }
 
 
