@@ -163,7 +163,7 @@ void*	rtos_malloc(size_t size){
 	
 	*p = size + sizeof(size_t);
 	p++;
-	b->alloced = true;
+
 	return p;
 
 }
