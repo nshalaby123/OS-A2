@@ -129,7 +129,14 @@ void split(Block *chunk, size_t size){
  * as `malloc(3)` would.
  */
 void*	rtos_malloc(size_t size){
+	if(size == 0){
 
+		return NULL;
+
+	}
+
+	
+	
 	Block *curr, *prev;
 	void *start;
 
