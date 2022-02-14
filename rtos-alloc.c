@@ -92,12 +92,12 @@ void block_list_remove(Block_List *list, size_t index){
 
 
 struct Block *free_block(struct Block  **finish, size_t size) {
-  struct Block *curr = global_stack;
-  while (curr && !(curr->free && curr->block_size >= size)) {
-    *finish = curr;
-    curr = curr->next;
-  }
-  return curr;
+	struct Block *curr = global_stack;
+ 	while (curr && !(curr->free && curr->block_size >= size)) {
+    		*finish = curr;
+    		curr = curr->next;
+  	}
+  	return curr;
 }
 
 
@@ -113,7 +113,7 @@ struct Block *find_space(struct Block* finish, size_t size) {
   	}
 
   	if (finish) { // NULL on finding space
-    		last->next = block;
+    		finish->next = block;
   	}
  	block->block_size = size;
   	block->next = NULL;
@@ -171,7 +171,7 @@ void split(Block *chunk, size_t size){
 // sbrk() changes the location of the program break, which defined the end of the proccess's 
 // data segment 
 void*	rtos_malloc(size_t size){
-	struck Block *block;
+	struct Block *block;
 
 	if(size <= 0){
 
@@ -289,7 +289,7 @@ return(block+1);
 	 return NULL;
 ***/	
 
-}
+
 
 void merge_2(){
 	Block *curr, *prev;
