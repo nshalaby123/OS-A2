@@ -199,36 +199,14 @@ void split(block chunk, size_t size){
 // data segment 
 // using first - fit
 void*	rtos_malloc(size_t size){
-	block b, last;
-	size_t s;
-
-	if(size <= 0){
-		return NULL;
-	}
-
-		if(base){
-			last = base;
-			b = find_block(&last, s);
-			if(b){
-				if((b->block_size-s) >= (BLOCK_SIZE +4)){
-					split(b, s);
-				}
-					b->free = 0;
-			} else {
-					b = extend_heap(last,s);
-					if(!b){
-						return NULL;
-					}
-				}
-				
-			} else {
-				b = extend_heap(NULL,s);
-				if(!b)
-					return NULL;
-				base = b;
-			}
-
-	return(b->data);
+	size_t *p;
+	if(size == 0) return NULL;
+	p = mmpa(NULL, size + sizeof(size_t), PROT_READ| PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, 0,0);
+	if(p == (void*)-1) return NULL;
+	
+	*p = size + sizeof(size_t);
+	p++;
+	return p;
 
 }
 	
