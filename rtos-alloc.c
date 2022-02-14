@@ -399,7 +399,24 @@ int valid_addr(void *p){
  * O(Alloced)
  */
 void	rtos_free(void *ptr){
-	// first we need to find the block to free.
+
+
+if(ptr!=NULL){
+ int *plen = (int*)ptr;
+    int len;
+
+    plen--;                          // Reach top of memory
+    len = *plen;                     // Read length
+
+    munmap( (void*)plen, len );
+	}
+}
+
+
+
+
+
+/**	// first we need to find the block to free.
 	block b;
 
 	if(!ptr){
@@ -437,7 +454,6 @@ void	rtos_free(void *ptr){
 
 }
 
-/***
 
 	if(ptr != NULL){
 	
