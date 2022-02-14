@@ -382,7 +382,11 @@ void	rtos_free(void *ptr){
   	struct Block* block = get_block(ptr);
  	assert(block->free == 0);
   
+
   	block->free = 1;
+
+	ptr=NULL;
+
 /***
 
 	if(ptr != NULL){
