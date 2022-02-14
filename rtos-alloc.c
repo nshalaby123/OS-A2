@@ -408,7 +408,7 @@ void	rtos_free(void *ptr){
 
 
  		void *chunk = ptr-sizeof(size_t);
-		if(munmap(chunk, *(size_t)chunk) != 0){
+		if(munmap(chunk, *(size_t*)chunk) != 0){
 			return
 
 		}
