@@ -177,32 +177,33 @@ void*	rtos_malloc(size_t size){
 
 		return NULL;
 
-	
+	}
 
-	if(!global_stack){
-		block = find_space(NULL, size);
-		if(!block){
-			return NULL;
-		} 
+		if(!global_stack){
+			block = find_space(NULL, size);
+			if(!block){
+				return NULL;
+			} 
 
-		global_stack = block;
+			global_stack = block;
 		} else {
 
 			struct Block *finish = global_stack;
 			block = free_block(&finish, size);
 
 			if(!block){
+				block = find_space(finish, size);
+				if(!block){
 
-				return NULL;
-
-			}
-		} else {
+					return NULL;
+				}
+			} else {
 
 			block->free = 0;
 		}
 	}
 
-return(block+1);
+	return(block+1);
 
 }
 	
