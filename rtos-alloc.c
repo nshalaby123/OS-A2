@@ -400,7 +400,7 @@ int valid_addr(void *p){
  */
 void	rtos_free(void *ptr){
 	// first we need to find the block to free.
-	block block;
+	block b;
 
 	if(!ptr){
  	  return;
@@ -409,33 +409,34 @@ void	rtos_free(void *ptr){
 
   //	struct Block* block = get_block(ptr);
 
-	block = get_block(ptr);
- 	assert(block->free == 0);
+	b = get_block(ptr);
+ 	assert(b->free == 0);
   
 
-  	block->free = 1;
+  	b->free = 1;
 
-	if(block->prev && block->prev->free){
-		block = merge_3(block->prev);
+	if(b->prev && b->prev->free){
+		b = merge_3(b->prev);
 
 
-	if(block->next)
-		merge_3(block);
+	if(b->next)
+		merge_3(b);
 	else{
 
-		if(block->prev){
-			block->prev->next = NULL;
+		if(b->prev){
+			b->prev->next = NULL;
 		}
 
 		else
-			block = NULL;
-		brk(block);
+			b = NULL;
+		brk(b);
 	}
 
 
 	}
 
 }
+
 /***
 
 	if(ptr != NULL){
@@ -464,7 +465,6 @@ void	rtos_free(void *ptr){
 
 
 
-}
 
 
 
