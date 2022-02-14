@@ -22,6 +22,8 @@
 
 uintptr_t  memory[HEAP_CAP] = {0};
 size_t heap_size = 0;
+size_t tmp_heap_size = 0;
+
 
 int counter = 0;
 
@@ -62,79 +64,14 @@ Block *freeblock = (void*)memory;
 void *base = NULL;
 typedef struct Block *block;
 
-void block_list_insert(Block_List *list, void *start, size_t size){
-	assert(list->count < BLOCK_LIST_CAP);
-
-	
-	list->chunk[list->count].start = start;
-	list->chunk[list->count].block_size = size;
-	
-
-	for(size_t i = list->count; i> 0 && list->chunk[i].start < list->chunk[i-1].start; --i){
-		// swap here!
-		const Block t = list->chunk[i];
-		list->chunk[i] = list->chunk[i-1];
-		list->chunk[i-1] = t;
-	
-	}
-	list->count += 1;
-
-}
-
-
-void block_list_remove(Block_List *list, size_t index){
-	assert(index < list->count);
-	for(size_t i = index; i < list->count - 1; ++i){
-		list->chunk[i] = list->chunk[i+1];
-		
-
-
-	}
-
-	list->count -= 1;
-
-}
-
-
-struct Block *free_block(struct Block  **finish, size_t size) {
-	struct Block *curr = global_stack;
- 	while (curr && !(curr->free && curr->block_size >= size)) {
-    		*finish = curr;
-    		curr = curr->next;
-  	}
-  	return curr;
-}
 
 
 
 
-struct Block *find_space(struct Block* finish, size_t size) {
- 	struct Block *block;
-  	block = sbrk(0);
-	void *request = sbrk(size + sizeof(struct Block));
-  	assert((void*)block == request);
-  	if (request == (void*) -1) {
-    		return NULL;
-  	}
-
-  	if (finish) { // NULL on finding space
-    		finish->next = block;
-  	}
- 	block->block_size = size;
-  	block->next = NULL;
-  	block->free = 0;
-  	return block;
-}
 
 
-block find_block (block *last , size_t size ){
-	block b=base;
-	while (b && !(b->free && b->block_size >= size )) {
-		*last = b;
-		b = b->next;
-	}
-	return (b);
-}
+
+
 
 
 
@@ -157,13 +94,17 @@ void*	rtos_malloc(size_t size){
 	size_t *p;
 	block b;
 	if(size == 0) return NULL;
+
 	p = mmap(NULL, size + sizeof(size_t), PROT_READ| PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, 0,0);
 	if(p == (void*)-1){
 		counter = 0;
 		return NULL;
 	}
+	
 	counter = 2;
 	*p = size + sizeof(size_t);
+	tmp_heap_size = *p;
+	heap_size = heap_size + *p;
 	p++;
 
 	return p;
@@ -207,38 +148,6 @@ void*	rtos_realloc(void *ptr, size_t size){
 
 
 
-int block_list_find(const Block_List *list, uintptr_t *ptr){
-
-	for(size_t i = 0; i < list->count; ++i){
-		if(list->chunk[i].start == ptr){
-			return (int) i;
-		}
-	
-
-	}
-	return -1;
-}
-
-struct Block *get_block(void *ptr){
-        return (struct Block*)ptr -1;
-
-
-
-}
-
-int valid_addr(void *p){
-
-	if(base)
-	{
-		if(p>base && p<sbrk(0)){
-		
-			return(p == (get_block(p)->ptr));
-		}	
-	}
-	return 0;
-
-}
-
 /**
  * Release the memory allocation starting at @b ptr for general use,
  * as `free(3)` would.
@@ -251,11 +160,10 @@ void	rtos_free(void *ptr){
 	size_t size;
 	int *p = ptr;
 
-	
-	
 	ptr--;
 	size = *p;
-	
+	heap_size = heap_size-size;
+	tmp_heap_size = 0;
 	counter = 0;
 	munmap(ptr, size);
 	
@@ -271,7 +179,7 @@ void	rtos_free(void *ptr){
  * @pre   @b ptr points at a valid allocation (according to `rtos_allocated`)
  */
 size_t  rtos_alloc_size(void *ptr){
-	return sizeof(ptr);
+	return tmp_heap_size;
 
 }
 
