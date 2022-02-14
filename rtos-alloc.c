@@ -16,17 +16,17 @@
 
 #define HEAP_CAP 640000
 #define BLOCK_LIST_CAP 1024
-#define HEAP_CAP_WORDS (HEAP_CAP / sizeof(uintptr_t))
 
 
-uintptr_t  memory[HEAP_CAP_WORDS] = {0};
+uintptr_t  memory[HEAP_CAP] = {0};
 size_t heap_size = 0;
 
 
 typedef struct {
 	size_t block_size;
 	int free;
-	uintptr_t *start; 
+	uintptr_t *start;
+	struct Block *next; 
 } Block;
 
 
@@ -148,6 +148,27 @@ void*	rtos_malloc(size_t size){
 	
 
 }
+
+void merge_2(){
+	Block *curr, *prev;
+	curr = freeblock;
+	while((curr->next) != NULL){
+		if((curr->free) && (curr->next->free)){
+			curr->block_size = curr->block_size + ((curr->next->block_size) + sizeof(struct Block));
+			curr->next = curr->next->next;
+
+		}
+		else if((curr->free == 1) && (curr->next->free == 0)){
+			curr = curr->next;
+
+		}
+		prev = curr;
+		curr = curr->next;
+
+	}
+
+
+}
 /**
  * Change the size of the allocation starting at @b ptr to be @b size bytes,
  * as `realloc(3)` would.
@@ -191,8 +212,8 @@ void	rtos_free(void *ptr){
 			Block *curr = ptr;
 			curr = curr - 1;
 			curr->free = 1;
-
-			block_list_merge(curr, ptr);
+			merge_2();
+			
 		}
 
 		//block_list_insert(&freed_blocks, alloced_blocks.chunk[index].start, alloced_blocks.chunk[index].block_size);
@@ -211,6 +232,8 @@ void	rtos_free(void *ptr){
  * @pre   @b ptr points at a valid allocation (according to `rtos_allocated`)
  */
 size_t  rtos_alloc_size(void *ptr){
+	return ptr;
+
 }
 
 /**
