@@ -244,9 +244,9 @@ int valid_addr(void *p){
  */
 void	rtos_free(void *ptr){
 	if(ptr == NULL) return;
-	block b;
+	
 	ptr--;
-	b->alloced = false;
+
 	munmap(ptr, &ptr);
 	
 }
