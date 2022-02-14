@@ -160,9 +160,10 @@ void*	rtos_malloc(size_t size){
 	if(size == 0) return NULL;
 	p = mmap(NULL, size + sizeof(size_t), PROT_READ| PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, 0,0);
 	if(p == (void*)-1){
-		counter = 2;
+		counter = 0;
 		return NULL;
 	}
+	counter = 2;
 	*p = size + sizeof(size_t);
 	p++;
 
