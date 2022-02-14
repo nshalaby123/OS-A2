@@ -295,6 +295,14 @@ int block_list_find(const Block_List *list, uintptr_t *ptr){
 	return -1;
 }
 
+
+
+struct Block *get_block(void *ptr){
+	return (struct Block*)ptr -1;
+
+
+
+}
 /**
  * Release the memory allocation starting at @b ptr for general use,
  * as `free(3)` would.
