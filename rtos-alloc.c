@@ -143,7 +143,7 @@ void*	rtos_malloc(size_t size){
 	}
 
 	curr = freeblock;
-	while((((curr->block_size <size) || ((curr->free == 0)) && (curr->next !=NULL)))){
+	while(((((curr->block_size <size) || ((curr->free == 0))) && (curr->next !=NULL)))){
 		prev = curr;
 		curr = curr->next;
 		
