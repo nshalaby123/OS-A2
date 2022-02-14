@@ -512,7 +512,9 @@ bool    rtos_allocated(void *ptr){
 	if(ptr == NULL){
 		return false;
 	}	
-	return true;
+	else{
+		return valid_addr(ptr);
+	}
 }
 
 /**
