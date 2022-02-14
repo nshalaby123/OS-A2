@@ -30,7 +30,10 @@ typedef struct Block {
 	size_t block_size;
 	int free;
 	uintptr_t *start;
-	struct Block *next; 
+	struct Block *next;
+	struct Block *prev;
+	char data[1];
+	void *ptr; 
 } Block;
 
 
@@ -53,6 +56,9 @@ Block_List tmp_blocks = {0};
 
 
 Block *freeblock = (void*)memory;
+
+void base* = NULL;
+typedef struct Block *block;
 
 void block_list_insert(Block_List *list, void *start, size_t size){
 	assert(list->count < BLOCK_LIST_CAP);
@@ -203,7 +209,7 @@ void*	rtos_malloc(size_t size){
 		}
 	}
 
-	return(block+1);
+	return(block->data);
 
 }
 	
@@ -341,8 +347,18 @@ void*	rtos_realloc(void *ptr, size_t size){
 
 	return ptr;
 
+
 }
 
+Block merge_3(block block){
+	if (block->next && block->next ->free ){
+		block->block_size += sizeof(block) + block->next -> block_size;
+		block->next = block->next ->next;
+		if (block->next)
+			block->next ->prev = block;
+	}
+	return (block);
+}
 
 
 int block_list_find(const Block_List *list, uintptr_t *ptr){
@@ -357,14 +373,26 @@ int block_list_find(const Block_List *list, uintptr_t *ptr){
 	return -1;
 }
 
-
-
 struct Block *get_block(void *ptr){
-	return (struct Block*)ptr -1;
+        return (struct Block*)ptr -1;
 
 
 
 }
+
+int valid_addr(void *p){
+
+	if(base)
+	{
+		if(p>base && p<sbrk(0)){
+		
+			return(p == (get_block(p)->ptr);
+		}	
+
+	return 0;
+
+}
+
 /**
  * Release the memory allocation starting at @b ptr for general use,
  * as `free(3)` would.
@@ -385,10 +413,27 @@ void	rtos_free(void *ptr){
 
   	block->free = 1;
 
+	if(block->prev && block-prev->free){
+		block = merge_3(block->prev);
 
-	ptr =NULL;
-	
-	assert(ptr == NULL);
+
+	if(block->next)
+		merge_3(block);
+	else{
+
+		if(block->prev){
+			block->prev->next = NULL;
+		}
+
+		else
+			block = NULL;
+		brk(block);
+	}
+
+
+	}
+
+}
 /***
 
 	if(ptr != NULL){
