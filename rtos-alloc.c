@@ -385,8 +385,7 @@ void	rtos_free(void *ptr){
 
   	block->free = 1;
 
-	ptr->NULL;
-return NULL;
+	return NULL;
 
 /***
 
