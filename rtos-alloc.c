@@ -279,9 +279,10 @@ bool    rtos_allocated(void *ptr){
 		return false;
 	}	
 	else if(counter == 0){
+		counter++;
 		return true;
 	}
-	counter++;
+	
 	return false;
 }
 
