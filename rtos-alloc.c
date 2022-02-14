@@ -386,7 +386,7 @@ void	rtos_free(void *ptr){
   	block->free = 1;
 
 	
-	*ptr = NULL;
+	assert(ptr == NULL);
 /***
 
 	if(ptr != NULL){
