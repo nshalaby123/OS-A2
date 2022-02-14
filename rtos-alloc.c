@@ -247,7 +247,10 @@ int valid_addr(void *p){
  */
 void	rtos_free(void *ptr){
 	if(ptr == NULL) return;
-	size_t *p;
+	block b;
+	
+	size_t *p = b->block_size;
+	
 	ptr--;
 	counter = 0;
 	munmap(ptr, *p);
