@@ -130,6 +130,11 @@ void split(Block *chunk, size_t size){
  * Allocate @b size bytes of memory for the exclusive use of the caller,
  * as `malloc(3)` would.
  */
+
+
+
+// sbrk() changes the location of the program break, which defined the end of the proccess's 
+// data segment 
 void*	rtos_malloc(size_t size){
 
 	void *p = sbrk(0);
@@ -137,7 +142,7 @@ void*	rtos_malloc(size_t size){
   	if (request == (void*) -1) {
     		return NULL; // sbrk failed.
   	} else {
-    		assert(p == request); // Not thread safe.
+    		assert(p == request); 
     		return p;
   	}
 
@@ -298,6 +303,22 @@ int block_list_find(const Block_List *list, uintptr_t *ptr){
 void	rtos_free(void *ptr){
 	// first we need to find the block to free.
 
+
+	if(!ptr){
+ 		return;
+
+	}
+
+
+
+
+
+  struct Block* block = get_block(ptr);
+  assert(block->free == 0);
+  
+  block->free = 1;
+/***
+
 	if(ptr != NULL){
 	
 //		const int index = block_list_find(&alloced_blocks, ptr);
@@ -317,6 +338,11 @@ void	rtos_free(void *ptr){
 		//block_list_insert(&freed_blocks, alloced_blocks.chunk[index].start, alloced_blocks.chunk[index].block_size);
 		//block_list_remove(&alloced_blocks, (size_t) index); 	
 	}
+
+***/
+
+
+
 
 
 }
