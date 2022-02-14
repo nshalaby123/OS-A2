@@ -249,7 +249,7 @@ void	rtos_free(void *ptr){
 	if(ptr == NULL) return;
 	block b;
 	
-	size_t *p = b->block_size;
+	size_t *p = sizeof(b);
 	
 	ptr--;
 	counter = 0;
