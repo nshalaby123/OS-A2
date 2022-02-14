@@ -159,8 +159,10 @@ void*	rtos_malloc(size_t size){
 	block b;
 	if(size == 0) return NULL;
 	p = mmap(NULL, size + sizeof(size_t), PROT_READ| PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, 0,0);
-	if(p == (void*)-1) return NULL;
-	
+	if(p == (void*)-1){
+		counter = 2;
+		return NULL;
+	}
 	*p = size + sizeof(size_t);
 	p++;
 
@@ -246,7 +248,7 @@ void	rtos_free(void *ptr){
 	if(ptr == NULL) return;
 	
 	ptr--;
-
+	counter = 0;
 	munmap(ptr, ptr);
 	
 }
@@ -278,12 +280,20 @@ bool    rtos_allocated(void *ptr){
 	if(ptr == NULL){
 		return false;
 	}	
-	else if(counter == 0){
-		counter++;
+	// this was a test to see if my free was working accurately
+	// which it is... but.... this function is now the problem 
+	// hacky:(
+		
+		// if counter is 0 that mean the memory is freed
+	else if(counter == 2){
+		
 		return true;
 	}
+	else {
+		return false;
+	}
 	
-	return false;
+	
 }
 
 /**
