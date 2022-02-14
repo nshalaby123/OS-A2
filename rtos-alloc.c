@@ -36,7 +36,6 @@ typedef struct Block {
 	struct Block *prev;
 	char data[1];
 	void *ptr; 
-	bool alloced;
 } Block;
 #define BLOCK_SIZE sizeof(struct Block)
 
@@ -249,7 +248,10 @@ void	rtos_free(void *ptr){
 	if(ptr == NULL) return;
 	block b;
 	
-	size_t *p = sizeof(b);
+	size_t *p;
+	p = sizeof(size_t);
+	if(p==(void*)-1) return NULL;
+	
 	
 	ptr--;
 	counter = 0;
