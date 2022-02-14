@@ -57,7 +57,7 @@ Block_List tmp_blocks = {0};
 
 Block *freeblock = (void*)memory;
 
-void base* = NULL;
+void *base = NULL;
 typedef struct Block *block;
 
 void block_list_insert(Block_List *list, void *start, size_t size){
@@ -386,9 +386,9 @@ int valid_addr(void *p){
 	{
 		if(p>base && p<sbrk(0)){
 		
-			return(p == (get_block(p)->ptr);
+			return(p == (get_block(p)->ptr));
 		}	
-
+	}
 	return 0;
 
 }
