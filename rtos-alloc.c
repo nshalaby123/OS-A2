@@ -36,6 +36,7 @@ typedef struct Block {
 	struct Block *prev;
 	char data[1];
 	void *ptr; 
+	bool alloced;
 } Block;
 #define BLOCK_SIZE sizeof(struct Block)
 
@@ -155,12 +156,14 @@ block find_block (block *last , size_t size ){
 // using first - fit
 void*	rtos_malloc(size_t size){
 	size_t *p;
+	block b;
 	if(size == 0) return NULL;
 	p = mmap(NULL, size + sizeof(size_t), PROT_READ| PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, 0,0);
 	if(p == (void*)-1) return NULL;
 	
 	*p = size + sizeof(size_t);
 	p++;
+	b->alloced = true;
 	return p;
 
 }
@@ -241,75 +244,13 @@ int valid_addr(void *p){
  */
 void	rtos_free(void *ptr){
 	if(ptr == NULL) return;
+	block b;
 	ptr--;
 	munmap(ptr, ptr);
+	b->alloced = false;
 	ptr = NULL;
 }
 
-
-
-
-
-/**	// first we need to find the block to free.
-	block b;
-
-	if(!ptr){
- 	  return;
-
-	}
-
-  //	struct Block* block = get_block(ptr);
-
-	b = get_block(ptr);
- 	assert(b->free == 0);
-  
-
-  	b->free = 1;
-
-	if(b->prev && b->prev->free){
-		b = merge_3(b->prev);
-
-
-	if(b->next)
-		merge_3(b);
-	else{
-
-		if(b->prev){
-			b->prev->next = NULL;
-		}
-
-		else
-			b = NULL;
-		brk(b);
-	}
-
-
-	}
-
-}
-
-
-	if(ptr != NULL){
-	
-//		const int index = block_list_find(&alloced_blocks, ptr);
-//		assert(index >= 0);
-//		assert(ptr == alloced_blocks.chunk[index].start);
-		
-
-		if(((void*)memory <= ptr) && (ptr <= (void*)(memory + 25000 ))){
-		
-			Block *curr = ptr;
-			curr = curr - 1;
-			curr->free = 1;
-			merge_2();
-			
-		}
-
-		//block_list_insert(&freed_blocks, alloced_blocks.chunk[index].start, alloced_blocks.chunk[index].block_size);
-		//block_list_remove(&alloced_blocks, (size_t) index); 	
-	}
-
-***/
 
 
 
@@ -336,7 +277,8 @@ bool    rtos_allocated(void *ptr){
 	if(ptr == NULL){
 		return false;
 	}	
-	return true;
+	block b;
+	return b->alloced;
 }
 
 /**
