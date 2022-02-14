@@ -1,4 +1,4 @@
-
+o
 #include <stdint.h>
 
 #include<stdio.h>
@@ -22,7 +22,7 @@ uintptr_t  memory[HEAP_CAP] = {0};
 size_t heap_size = 0;
 
 
-typedef struct {
+typedef struct Block {
 	size_t block_size;
 	int free;
 	uintptr_t *start;
