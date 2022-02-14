@@ -23,7 +23,7 @@
 uintptr_t  memory[HEAP_CAP] = {0};
 size_t heap_size = 0;
 
-
+int counter = 0;
 
 void *global_stack = NULL;
 
@@ -247,7 +247,7 @@ void	rtos_free(void *ptr){
 	
 	ptr--;
 
-	munmap(ptr, &ptr);
+	munmap(ptr, ptr);
 	
 }
 
@@ -274,10 +274,14 @@ size_t  rtos_alloc_size(void *ptr){
  *          from @b my_{m,re}alloc
  */
 bool    rtos_allocated(void *ptr){
+	
 	if(ptr == NULL){
 		return false;
 	}	
-	
+	else if(counter == 0){
+		return true;
+	}
+	counter++;
 	return false;
 }
 
