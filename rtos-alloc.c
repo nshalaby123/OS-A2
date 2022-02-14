@@ -401,15 +401,19 @@ int valid_addr(void *p){
 void	rtos_free(void *ptr){
 
 
-if(ptr!=NULL){
- int *plen = (int*)ptr;
-    int len;
+	if(ptr==NULL){
 
-    plen--;                          // Reach top of memory
-    len = *plen;                     // Read length
-
-    munmap( (void*)plen, len );
+		return;
 	}
+ 		int *plen = (int*)ptr;
+    		int len;
+
+    		plen--;                          // Reach top of memory
+    		len = *plen;                     // Read length
+
+    		munmap( (void*)plen, len );
+	ptr = NULL;
+	
 }
 
 
